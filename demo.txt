@@ -1,0 +1,22 @@
+ĐANG XỬ LÝ DỮ LIỆU TỪ THÁNG 1/2025 ĐẾN 1/2026...
+
+=== 1. Conduct a hypothesis test and construct a confidence interval for the population mean. (California) ===
+KTC 95% cho mean: [753,641, 762,520] | mean=758,081, s=7,347, n=13, t_alpha/2=2.1788
+Kiểm định H0: mu = 750000, t0 = 3.9659                   Kết luận: Reject H0
+
+=== 2. Conduct a hypothesis test and construct a confidence interval for the population proportion. (California) ===
+Số tháng tăng/so sánh = 4/12     (p_hat = 0.333)
+KTC 95% cho p: [0.067, 0.600]
+Kiểm định H0: p = 0.50                                   Kết luận: Fail to reject H0
+
+=== 3. Conduct a hypothesis test and construct a confidence interval for the difference between two population means. (CA vs FL) ===
+diff(mean) = 380,084 | KTC 95%: [374,163, 386,004]
+Kiểm định H0: mu_CA - mu_FL = 0, t0 = 132.505            Kết luận: Reject H0
+
+=== 4. Conduct a hypothesis test and construct a confidence interval for the difference between two population proportions. ===
+p1 (CA) = 0.333, p2 (FL) = 0.000, diff = 0.333
+z=2.191, p=0.0285 | KTC 95%: [0.067, 0.600]      Kết luận: Reject H0
+
+=== 5. Regression analysis ===
+[California] y = 768756.66 + -1525.12 * x;  R^2 = 0.654, p = 0.0008, n = 13
+[Florida]    y = 390796.56 + -1828.47 * x;  R^2 = 0.957, p = 0.0000, n = 13
