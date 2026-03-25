@@ -10,8 +10,9 @@ import matplotlib.pyplot as plt
 # Đọc toàn bộ file ZHVI.csv
 df = pd.read_csv('ZHVI.csv', header=None)
 
-# Cắt lấy đúng phần dữ liệu từ dòng 302 đến 314 trong Excel
-df_filtered = df.iloc[301:314, :]
+# MỞ RỘNG DỮ LIỆU: Từ tháng 1/2024 đến 1/2026 (25 tháng)
+# Python đếm từ 0, dòng 1/2024 tương ứng với index 289, đến 1/2026 là 313 (cắt đến 314)
+df_filtered = df.iloc[289:314, :]
 
 # Lấy dữ liệu: Cột K (Washington) là index 10, Cột S (Maine) là index 18
 wa_prices = pd.to_numeric(df_filtered.iloc[:, 10]).values
@@ -23,9 +24,9 @@ diffs_me = np.diff(me_prices)
 
 x_wa = np.sum(diffs_wa > 0) # Số tháng WA tăng giá
 x_me = np.sum(diffs_me > 0) # Số tháng ME tăng giá
-n_thang_so_sanh = len(diffs_wa) # Sẽ là 12 (vì có 13 tháng)
+n_thang_so_sanh = len(diffs_wa) # Sẽ là 24 (vì có 25 tháng)
 
-print("ĐANG XỬ LÝ DỮ LIỆU TỪ THÁNG 1/2025 ĐẾN 1/2026...\n")
+print("ĐANG XỬ LÝ DỮ LIỆU TỪ THÁNG 1/2024 ĐẾN 1/2026...\n")
 
 # ==========================================
 # SLIDE 1: KIỂM ĐỊNH 1 TRUNG BÌNH (Washington)
@@ -46,14 +47,14 @@ ci_lower_1, ci_upper_1 = mean_wa - margin_1, mean_wa + margin_1
 conclusion_1 = "Reject H0" if p_value_1 < 0.05 else "Fail to reject H0"
 
 print("=== 1. Conduct a hypothesis test and construct a confidence interval for the population mean. (Washington) ===")
-print(f"KTC 95% cho mean: [{ci_lower_1:,.0f}, {ci_upper_1:,.0f}] | mean={mean_wa:,.0f}, s={std_wa:,.0f}, n={n1_wa}, t_alpha/2={t_crit_1:.4f}")
-print(f"Kiểm định H0: mu = {mu0_s1}, t0 = {t_stat_1:.4f} \t\t\t Kết luận: {conclusion_1}\n")
+print(f"KTC 95% cho mean: [{ci_lower_1:,.0f}, {ci_upper_1:,.0f}] | mean={mean_wa:,.0f}, s={std_wa:,.0f}, n={n1_wa}")
+print(f"Kiểm định H0: mu = {mu0_s1} | t_alpha/2 = {t_crit_1:.4f}, t0 = {t_stat_1:.4f}, p-value = {p_value_1:.4f} \t Kết luận: {conclusion_1}\n")
 
 # ==========================================
 # SLIDE 2: KIỂM ĐỊNH 1 TỶ LỆ (Washington)
 # ==========================================
-# Giả thuyết: H0: p = 0.50 
-p0_s2 = 0.50
+# Giả thuyết: H0: p = 0.75
+p0_s2 = 0.75
 p_hat_wa = x_wa / n_thang_so_sanh
 
 z_crit_2 = stats.norm.ppf(1 - 0.05/2)
@@ -67,9 +68,9 @@ p_value_2 = 2 * (1 - stats.norm.cdf(abs(z_stat_2)))
 conclusion_2 = "Reject H0" if p_value_2 < 0.05 else "Fail to reject H0"
 
 print("=== 2. Conduct a hypothesis test and construct a confidence interval for the population proportion. (Washington) ===")
-print(f"Số tháng tăng/so sánh = {x_wa}/{n_thang_so_sanh} \t (p̂ = {p_hat_wa:.3f})")
+print(f"Số tháng tăng/so sánh = {x_wa}/{n_thang_so_sanh} \t (p mũ = {p_hat_wa:.3f})")
 print(f"KTC 95% cho p: [{ci_lower_2:.3f}, {ci_upper_2:.3f}]")
-print(f"Kiểm định H0: p = {p0_s2:.2f} \t\t\t\t\t Kết luận: {conclusion_2}\n")
+print(f"Kiểm định H0: p = {p0_s2:.2f} | z_alpha/2 = {z_crit_2:.4f}, z0 = {z_stat_2:.3f}, p-value = {p_value_2:.4f} \t Kết luận: {conclusion_2}\n")
 
 # ==========================================
 # SLIDE 3: KIỂM ĐỊNH KHÁC BIỆT 2 TRUNG BÌNH (WA vs ME)
@@ -91,7 +92,7 @@ conclusion_3 = "Reject H0" if p_value_3 < 0.05 else "Fail to reject H0"
 
 print("=== 3. Conduct a hypothesis test and construct a confidence interval for the difference between two population means. (WA vs ME) ===")
 print(f"diff(mean) = {diff_mean:,.0f} | KTC 95%: [{diff_mean - margin_3:,.0f}, {diff_mean + margin_3:,.0f}]")
-print(f"Kiểm định H0: mu_WA - mu_ME = 0, t0 = {t_stat_3:.3f} \t\t Kết luận: {conclusion_3}\n")
+print(f"Kiểm định H0: mu_WA - mu_ME = 0 | t_alpha/2 = {t_crit_3:.4f}, t0 = {t_stat_3:.3f}, p-value = {p_value_3:.4f} \t Kết luận: {conclusion_3}\n")
 
 # ==========================================
 # SLIDE 4: KIỂM ĐỊNH KHÁC BIỆT 2 TỶ LỆ (WA vs ME)
@@ -116,7 +117,8 @@ conclusion_4 = "Reject H0" if p_value_4 < 0.05 else "Fail to reject H0"
 
 print("=== 4. Conduct a hypothesis test and construct a confidence interval for the difference between two population proportions. ===")
 print(f"p̂1 (WA) = {p_hat_wa:.3f}, p̂2 (ME) = {p_hat_me:.3f}, diff = {diff_p:.3f}")
-print(f"z={z_stat_4:.3f}, p-value={p_value_4:.4f} | KTC 95% cho (p1 - p2): [{ci_lower_4:.3f}, {ci_upper_4:.3f}] \t Kết luận: {conclusion_4}\n")
+print(f"Kiểm định H0: p1 - p2 = 0 | z_alpha/2 = {z_crit_4:.4f}, z0 = {z_stat_4:.3f}, p-value = {p_value_4:.4f}")
+print(f"KTC 95% cho (p1 - p2): [{ci_lower_4:.3f}, {ci_upper_4:.3f}] \t Kết luận: {conclusion_4}\n")
 
 # ==========================================
 # SLIDE 5: PHÂN TÍCH HỒI QUY VÀ VẼ BIỂU ĐỒ
@@ -133,32 +135,30 @@ print(f"[Maine]      y = {res_me.intercept:.2f} + {res_me.slope:.2f} * x;  R^2 =
 # Vẽ hình
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
 
-# 1. Định nghĩa sẵn nhãn và vị trí để dùng chung cho cả 2 biểu đồ
-nhan_thang_nam = ['1/2025', '2/2025', '3/2025', '4/2025', '5/2025', '6/2025', 
-                  '7/2025', '8/2025', '9/2025', '10/2025', '11/2025', '12/2025', '1/2026']
-vi_tri_cu = range(1, 14) 
+# 1. Tự động tạo danh sách 25 nhãn từ 1/2024 đến 1/2026 bằng list comprehension
+nhan_thang_nam = [f"{m}/2024" for m in range(1, 13)] + [f"{m}/2025" for m in range(1, 13)] + ["1/2026"]
+vi_tri_cu = range(1, 26) 
 
 # --- BIỂU ĐỒ 1: WASHINGTON (ax1) ---
 ax1.plot(thang_truc_x, wa_prices, 'o-', label="Giá trị thực")
 ax1.plot(thang_truc_x, res_wa.intercept + res_wa.slope*thang_truc_x, '-', label="Đường xu hướng")
-# Chú ý: Đổi luôn p thành p-value trên tiêu đề biểu đồ cho đồng bộ
 ax1.set_title(f"Xu hướng tuyến tính - Washington (R²={res_wa.rvalue**2:.3f}, p-value={res_wa.pvalue:.3f})")
 ax1.set_xlabel("Thời gian")
 ax1.set_ylabel("Giá trị")
 ax1.legend()
 ax1.set_xticks(vi_tri_cu)
-ax1.set_xticklabels(nhan_thang_nam, rotation=45)
+# Thêm fontsize=9 để 25 nhãn không bị dính chùm vào nhau
+ax1.set_xticklabels(nhan_thang_nam, rotation=45, fontsize=9)
 
 # --- BIỂU ĐỒ 2: MAINE (ax2) ---
 ax2.plot(thang_truc_x, me_prices, 'o-', label="Giá trị thực")
 ax2.plot(thang_truc_x, res_me.intercept + res_me.slope*thang_truc_x, '-', label="Đường xu hướng")
-# Chú ý: Đổi luôn p thành p-value trên tiêu đề biểu đồ cho đồng bộ
 ax2.set_title(f"Xu hướng tuyến tính - Maine (R²={res_me.rvalue**2:.3f}, p-value={res_me.pvalue:.3f})")
 ax2.set_xlabel("Thời gian")
 ax2.set_ylabel("Giá trị")
 ax2.legend()
 ax2.set_xticks(vi_tri_cu)
-ax2.set_xticklabels(nhan_thang_nam, rotation=45)
+ax2.set_xticklabels(nhan_thang_nam, rotation=45, fontsize=9)
 
 # Đảm bảo layout không bị lẹm viền khi nghiêng chữ 45 độ
 plt.tight_layout()
